@@ -1,0 +1,24 @@
+{
+  "name": "iteratifbarker",
+  "version": "1.0.0",
+  "description": "The place to become riche ?",
+  "main": "base_websocket.js",
+  "dependencies": {
+    "@binance/connector": "^1.5.0",
+    "node-binance-api": "^0.13.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrienCrosio/IteratifBARKER.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adrienCrosio/IteratifBARKER/issues"
+  },
+  "homepage": "https://github.com/adrienCrosio/IteratifBARKER#readme"
+}
