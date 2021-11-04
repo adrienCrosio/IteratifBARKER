@@ -1,0 +1,12 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}

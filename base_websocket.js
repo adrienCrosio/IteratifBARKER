@@ -21,3 +21,4 @@ const aggTrade = client.aggTradeWS('bnbusdt', callbacks)
 
 // support combined stream
 //const combinedStreams = client.combinedStreams(['btcusdt@miniTicker', 'ethusdt@tikcer'], callbacks)
+
