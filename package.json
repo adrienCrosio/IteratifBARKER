@@ -5,6 +5,7 @@
   "main": "base_websocket.js",
   "dependencies": {
     "@binance/connector": "^1.5.0",
+    "binance-api-node": "^0.11.22",
     "node-binance-api": "^0.13.0"
   },
   "devDependencies": {
