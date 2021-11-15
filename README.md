@@ -2,8 +2,14 @@
 The place to become riche ?
 
 ## set up environement
+``npm install``
 
-``npm update``
+## set up environement
+- ``npm run launch`` to compile and execute
+- ``npm run execute`` to execute
+- ``npm run build`` to compile
+
+`See the package.json script`
 
 ## Binance client ts
 https://www.npmjs.com/package/binance-api-node
