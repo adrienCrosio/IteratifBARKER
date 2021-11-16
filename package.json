@@ -4,6 +4,7 @@
   "description": "The place to become riche ?",
   "main": "base_websocket.js",
   "dependencies": {
+    "@angular/cli": "^13.0.2",
     "@binance/connector": "^1.5.0",
     "binance-api-node": "^0.11.22",
     "node-binance-api": "^0.13.0",
