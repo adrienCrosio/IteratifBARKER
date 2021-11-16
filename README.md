@@ -3,11 +3,13 @@ The place to become riche ?
 
 ## set up environement
 ``npm install``
+in root and in iteratifBarker-front folder
 
 ## set up environement
-- ``npm run launch`` to compile and execute
-- ``npm run execute`` to execute
 - ``npm run build`` to compile
+- ``npm run bot-launch`` to execute bot
+- ``npm run bot`` to compile and execute bot
+- ``npm run server`` to launch servers on port 4200
 
 `See the package.json script`
 
