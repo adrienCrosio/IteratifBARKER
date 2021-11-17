@@ -1,11 +1,15 @@
 import express from 'express';
+import { main } from "./index";
 const app = express();
-import { main } from "./index"
 
 app.use(express.json());
 
-const distDir = "iteratifBarker-front/dist/";
-app.use(express.static(distDir));
+// Create link to Angular build directory
+// The `ng build` command will save the result
+// under the `dist` folder.
+// const distDir = "iteratifBarker-front/dist/";
+// app.use(express.static(distDir));
+/*** BUT DOES NOT CHANGE ANYTHING FOR ME AT THAT MOMENT I DONT UNDERSTAND THIS LINE ***/
 
 // Init the server
 const server = app.listen(process.env.PORT || 8080, function () {
