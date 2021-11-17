@@ -4,8 +4,10 @@ The place to become riche ?
 ## Setup environement
 
 ### NVM setup
-`https://github.com/coreybutler/nvm-windows/releases`
 
+Install nvm thanks to this guide : `https://github.com/coreybutler/nvm-windows/releases`
+
+Command to execute to change node version:
 ```
 nvm install 10.13.0
 nvm use 10.13.0
@@ -13,7 +15,7 @@ nvm use 10.13.0
 
 ### Project setup
 Run ``npm install`` in root and in iteratifBarker-front folder
-may change to node 10.13.0 cause of angular with graph.js
+We are using node@10.13.0 cause of angular with graph.js
 
 ## Script 
 - ``npm run build`` to compile
