@@ -1,11 +1,21 @@
 # IteratifBARKER
 The place to become riche ?
 
-## set up environement
-``npm install``
-in root and in iteratifBarker-front folder
+## Setup environement
 
-## script 
+### NVM setup
+`https://github.com/coreybutler/nvm-windows/releases`
+
+```
+nvm install 10.13.0
+nvm use 10.13.0
+```
+
+### Project setup
+Run ``npm install`` in root and in iteratifBarker-front folder
+may change to node 10.13.0 cause of angular with graph.js
+
+## Script 
 - ``npm run build`` to compile
 - ``npm run bot-launch`` to execute bot
 - ``npm run bot`` to compile and execute bot
