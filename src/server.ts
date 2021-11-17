@@ -1,15 +1,16 @@
-var express = require("express");
-var app = express();
+import express from 'express';
+const app = express();
 import { main } from "./index"
 
 app.use(express.json());
 
-var distDir = "iteratifBarker-front/dist/";
+const distDir = "iteratifBarker-front/dist/";
 app.use(express.static(distDir));
 
 // Init the server
-var server = app.listen(process.env.PORT || 8080, function () {
-    var port = server.address().port;
+const server = app.listen(process.env.PORT || 8080, function () {
+    // @ts-ignore
+    const port = server.address().port;
     console.log("App now running on port", port);
     main();
 });
