@@ -8,10 +8,19 @@ class Bot {
             apiSecret: api_key.secret_key,
             getTime: () => Date.now()
         });
+        const currency = 'ETHBTC'
+        // let clean = client.ws.aggTrades(currency, (trad) => {
+        //     console.log({ trad });
+        // });
 
-        const clean = client.ws.ticker('ETHBTC', ticker => {
-            console.log({ ticker });
-        })
+        // let clean = client.ws.ticker(currency, (ticker) => {
+        //     console.log({ ticker });
+        // });
+
+        let clean = client.ws.candles(currency, "1s", (candles) => {
+            // candles.
+            console.log({ currentprice: candles.close });
+        });
 
         setTimeout(() => {
             console.log("clean");

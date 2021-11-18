@@ -1,5 +1,4 @@
 import { Bot } from "./binance";
-
 function main() {
     new Bot();
 };
