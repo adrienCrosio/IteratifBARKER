@@ -53,14 +53,34 @@ wss.on('connection', (ws: WebSocket) => {
             } else {
                 //do nothing for now
             }
-            ws.send(`Hello, you sent -> ${message}`);
+            let messageOut: WebSocketMessageOut = {
+                data: "message",
+                event: messageIn.event,
+                id: id_user,
+                topic: "message"
+            };
+            ws.send(JSON.stringify(messageOut));
         } catch (error: any) {
-            ws.send(`ERROR -> ${(error as Error).message}`);
+            let messageOut: WebSocketMessageOut = {
+                data: (error as Error).message,
+                event: "error",
+                id: "-1",
+                topic: "error"
+            };
+            ws.send(JSON.stringify(messageOut));
         }
     });
 
+    cpt_id = cpt_id + 1;
+    let id_user = cpt_id.toString();
+    let messageOut: WebSocketMessageOut = {
+        data: "connected",
+        event: "connect",
+        id: id_user,
+        topic: "connection"
+    }
     //send immediatly a feedback to the incoming connection    
-    ws.send('Hi there, I am a WebSocket server');
+    ws.send(JSON.stringify(messageOut));
 });
 
 export interface MapIdWs {
@@ -68,6 +88,7 @@ export interface MapIdWs {
 }
 let topic_map: { [topic: string]: MapIdWs } = {};
 function subTopic(topic: string, id: string, ws: WebSocket) {
+    console.log(`SUB : ${topic}, id:${id}`);
     if (!topic_map[topic]) {
         topic_map[topic] = {};
     }
@@ -75,6 +96,7 @@ function subTopic(topic: string, id: string, ws: WebSocket) {
 }
 
 function unsubTopic(topic: string, id: string) {
+    console.log(`UNSUB : ${topic}, id:${id}`);
     if (!topic_map[topic]) {
         topic_map[topic] = {};
     }

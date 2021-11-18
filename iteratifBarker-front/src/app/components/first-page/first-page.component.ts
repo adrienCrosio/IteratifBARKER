@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective, Label } from 'ng2-charts';
+import { ApiService } from 'src/app/services/api/api.service';
 
 @Component({
   selector: 'app-first-page',
@@ -11,7 +12,7 @@ export class FirstPageComponent implements OnInit, AfterViewInit {
 
   @ViewChild(BaseChartDirective, { static: false }) chart!: BaseChartDirective;
 
-  constructor() { }
+  constructor(private apiService: ApiService) { }
 
   barChartOptions: ChartOptions = {
     responsive: true,
@@ -34,6 +35,11 @@ export class FirstPageComponent implements OnInit, AfterViewInit {
   ];
 
   ngOnInit(): void {
+    let cpt = 0;
+    this.apiService.subTopic("status", (data) => {
+      cpt++;
+      console.log(cpt, data);
+    })
   }
 
   ngAfterViewInit(): void {
@@ -50,7 +56,7 @@ export class FirstPageComponent implements OnInit, AfterViewInit {
       for (const data of this.barChartData) {
         let randomNumber = Math.floor(Math.random() * 100);
         data.data?.push(randomNumber);
-        if(max_cap_reached){
+        if (max_cap_reached) {
           data.data?.shift();
         }
       }

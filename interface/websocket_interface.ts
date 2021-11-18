@@ -8,8 +8,8 @@ interface WebSocketMessageIn extends WebSocket {
     event: "sub" | "unsub",
 }
 interface WebSocketMessageOut extends WebSocket {
-    event: "data",
+    event: "data" | "connect" | "sub" | "unsub" | "error",
     id: string,
-    data:any
+    data: any
 }
 export { WebSocketMessageOut, WebSocketMessageIn }
