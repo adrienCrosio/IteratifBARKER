@@ -56,6 +56,17 @@ On monte un proxy sur le serveur angular qui redirige toute les requettes avec l
 
 ## Documentation
 
+### Vocabulaire
+
+- ask : prix le plus bas à la vente en fonction d'une quantité (prix min pour ACHETER)
+- bid : prix le plus haut à l'achat en fonction d'une quantité (prix max pour VENDRE)
+
+Candle:
+- hight : prix le plus haut durant la période
+- low : prix le plus bas durant la période
+- open : prix de début de période
+- close : prix de fin de période
+
 ### Binance client ts
 https://www.npmjs.com/package/binance-api-node
 
