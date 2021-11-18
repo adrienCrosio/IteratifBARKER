@@ -28,7 +28,7 @@ export class ApiService {
             this.onConnect();
           console.log("Connected to WebSocket server !");
         } else if (dataJson.event === "data") {
-          this.mapCallbackTopic[dataJson.topic](dataJson.data);
+          this.mapCallbackTopic[dataJson.topic](dataJson);
           // console.log({ data: dataJson.data });
         } else if (dataJson.event === "error") {
           console.error({ error: dataJson.data })
@@ -46,10 +46,10 @@ export class ApiService {
   }
 
   subTopic(topic: string, callback: (data: WebSocketMessageOut) => void) {
-    console.log("sub...");
     let message: WebSocketMessageIn = {
       event: "sub",
-      topic
+      topic,
+      id: this.id
     }
     this.mapCallbackTopic[topic] = callback;
     if (this.connected) {

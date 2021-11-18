@@ -1,7 +1,9 @@
-import Binance from 'binance-api-node';
+import Binance, { ReconnectingWebSocketHandler } from 'binance-api-node';
 import api_key from "../apikey.json";
 
 class Bot {
+    private cleanList: ReconnectingWebSocketHandler[] = [];
+    private allTopicCallBackFct!: (topic: string, value: any) => void;
     constructor() {
         const client = Binance({
             apiKey: api_key.public_key,
@@ -13,19 +15,30 @@ class Bot {
         //     console.log({ trad });
         // });
 
-        // let clean = client.ws.ticker(currency, (ticker) => {
+        // let clean = client.ws.candles(currency,"1s", (ticker) => {
         //     console.log({ ticker });
         // });
 
-        let clean = client.ws.candles(currency, "1s", (candles) => {
-            // candles.
+        this.cleanList.push(client.ws.candles(currency, "1m", (candles) => {
             console.log({ currentprice: candles.close });
-        });
+            if (this.allTopicCallBackFct !== undefined)
+                this.allTopicCallBackFct('currentPrice', candles.close);
+        }));
 
         setTimeout(() => {
-            console.log("clean");
+            console.log("clean")
+            // clean();
+        }, 10000);
+    }
+
+    setCallbackFctAllTopic(callback: (topic: string, value: any) => void) {
+        this.allTopicCallBackFct = callback;
+    }
+
+    clean() {
+        for (const clean of this.cleanList) {
             clean();
-        }, 5000)
+        }
     }
 }
 export { Bot };

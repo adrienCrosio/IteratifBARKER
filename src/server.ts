@@ -2,6 +2,7 @@ import express from 'express';
 import WebSocket from 'ws';
 import { createServer } from 'http';
 import { WebSocketMessageOut, WebSocketMessageIn } from "../interface/websocket_interface"
+import { main } from '.';
 const app = express();
 
 
@@ -128,13 +129,36 @@ function sendDataTopic(topic: string, data: any) {
 /**------------------------------------------------------------------------------------**/
 /**------------------------------------------------------------------------------------**/
 
+if (process.platform === "win32") {
+    var rl = require("readline").createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    rl.on("SIGINT", function () {
+        //@ts-ignore
+        process.emit("SIGINT");
+    });
+}
+
+
 // Init the server
 server.listen(8080, async () => {
     // @ts-ignore
     const port = server.address().port;
     console.log("App now running on port", port);
+    let bot = main();
+    bot.setCallbackFctAllTopic((topic, value) => {
+        sendDataTopic(topic, value);
+    })
     setInterval(() => {
         sendDataTopic('status', "UP");
     }, 5000);
+    process.on("SIGINT", function () {
+        console.log("ctr+C catch");
+        bot.clean();
+        //graceful shutdown
+        process.exit();
+    });
 });
 
