@@ -6,16 +6,18 @@
     "@binance/connector": "^1.5.0",
     "binance-api-node": "^0.11.22",
     "express": "^4.17.1",
-    "source-map-support": "^0.5.20"
+    "source-map-support": "^0.5.20",
+    "ws": "^8.2.3"
   },
   "devDependencies": {
     "@angular/cli": "^11.2.15",
     "@tsconfig/node16": "^1.0.2",
     "@types/express": "^4.17.13",
     "@types/node": "^16.11.7",
+    "@types/ws": "^8.2.0",
     "concurrently": "^6.4.0",
     "ts-node": "^10.4.0",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,7 +26,7 @@
     "bot": "npm run build & npm run bot-launch",
     "server": "concurrently npm:serv:*",
     "serv:angular": "cd ./iteratifBarker-front & ng serve --proxy-config proxy.config.json",
-    "serv:express": "npm run build & node -r source-map-support/register dist/src/server.js"
+    "serv:express": "npm run build & node --experimental-worker  -r source-map-support/register dist/src/server.js"
   },
   "repository": {
     "type": "git",
