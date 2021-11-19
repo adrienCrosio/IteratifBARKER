@@ -3,6 +3,7 @@ import WebSocket from 'ws';
 import { createServer } from 'http';
 import { WebSocketMessageOut, WebSocketMessageIn } from "../interface/websocket_interface"
 import { main } from '.';
+import { Bot } from './binance';
 const app = express();
 
 
@@ -39,12 +40,12 @@ wss.on('connection', (ws: WebSocket) => {
     ws.on('message', (message) => {
         try {
             let messageIn: WebSocketMessageIn = JSON.parse(message.toString());
+            console.log({ messageIn });
             let id_user: string;
             if (messageIn.id) {
                 id_user = messageIn.id;
             } else {
-                cpt_id = cpt_id + 1;
-                id_user = cpt_id.toString();
+                throw new Error("No id sent !");
             }
 
             if (messageIn.event === "sub") {
@@ -55,10 +56,10 @@ wss.on('connection', (ws: WebSocket) => {
                 //do nothing for now
             }
             let messageOut: WebSocketMessageOut = {
-                data: "message",
+                data: bot.getValueTopic(messageIn.topic),
                 event: messageIn.event,
                 id: id_user,
-                topic: "message"
+                topic: messageIn.topic
             };
             ws.send(JSON.stringify(messageOut));
         } catch (error: any) {
@@ -73,11 +74,11 @@ wss.on('connection', (ws: WebSocket) => {
     });
 
     cpt_id = cpt_id + 1;
-    let id_user = cpt_id.toString();
+    let id_user_g = cpt_id.toString();
     let messageOut: WebSocketMessageOut = {
         data: "connected",
         event: "connect",
-        id: id_user,
+        id: id_user_g,
         topic: "connection"
     }
     //send immediatly a feedback to the incoming connection    
@@ -141,13 +142,13 @@ if (process.platform === "win32") {
     });
 }
 
-
+let bot!: Bot;
 // Init the server
 server.listen(8080, async () => {
     // @ts-ignore
     const port = server.address().port;
     console.log("App now running on port", port);
-    let bot = main();
+    bot = main();
     bot.setCallbackFctAllTopic((topic, value) => {
         sendDataTopic(topic, value);
     })

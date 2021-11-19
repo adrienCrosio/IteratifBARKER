@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective, Label } from 'ng2-charts';
 import { ApiService } from 'src/app/services/api/api.service';
+import { WebSocketDataCurrentPrice } from "../../../../../interface/websocket_interface_data"
 
 @Component({
   selector: 'app-first-page',
@@ -12,6 +13,7 @@ export class FirstPageComponent implements OnInit, AfterViewInit {
 
   @ViewChild(BaseChartDirective, { static: false }) chart!: BaseChartDirective;
 
+  duration = 15 * 60 * 1000;
   constructor(private apiService: ApiService) { }
 
   barChartOptions: ChartOptions = {
@@ -34,13 +36,31 @@ export class FirstPageComponent implements OnInit, AfterViewInit {
   ];
 
   ngOnInit(): void {
-    let cpt = 0;
     this.apiService.subTopic("currentPrice", (data) => {
-      cpt++;
-      console.log(cpt, data);
-      this.barChartData[0].data?.push(data.data);
-      let date = new Date;
-      this.barChartLabels.push(date.toISOString());
+      if (data.event === "sub") {
+        //init
+        let curentPrice: WebSocketDataCurrentPrice[] = data.data;
+        this.barChartData[0].data = curentPrice.map(x => x.value);
+        this.barChartLabels = curentPrice.map(x => new Date(x.time).toISOString());
+      }
+      else {
+        //append
+        let curentPrice: WebSocketDataCurrentPrice = data.data;
+        this.barChartData[0].data?.push(curentPrice.value);
+        let cpt_shift = 0;
+        //@ts-ignore
+        this.barChartLabels.filter(timeISO => {
+          //@ts-ignore
+          let bool = new Date(timeISO).getTime() > (curentPrice.time - this.duration);
+          if (bool === false) {
+            cpt_shift++;
+          }
+          return bool;
+        });
+        let date = new Date(curentPrice.time);
+        this.barChartLabels.push(date.toISOString());
+        this.shift(cpt_shift);
+      }
     })
   }
 
@@ -48,12 +68,20 @@ export class FirstPageComponent implements OnInit, AfterViewInit {
     // this.dynamicArrayHandle();
   }
 
+  shift(cpt: number) {
+    for (let index = 0; index < cpt; index++) {
+      this.barChartLabels.shift();
+      for (const data of this.barChartData) {
+        data.data?.shift();
+      }
+    }
+  }
+
   async dynamicArrayHandle() {
     while (true) {
       let max_cap_reached = false;
       if (this.barChartLabels.length > 10) {
         max_cap_reached = true;
-        this.barChartLabels.shift();
       }
       for (const data of this.barChartData) {
         let randomNumber = Math.floor(Math.random() * 100);

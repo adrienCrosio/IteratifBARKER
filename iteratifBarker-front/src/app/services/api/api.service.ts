@@ -20,21 +20,28 @@ export class ApiService {
       } catch (error) {
         console.error(`JSON could not be parsed :\n${data.data}`)
       }
-      // console.log(dataJson);
       if (dataJson) {
         if (dataJson.event === "connect") {
           this.id = dataJson.id;
           if (this.connected === false)
             this.onConnect();
-          console.log("Connected to WebSocket server !");
+          console.log(`Connected to WebSocket server with id: ${this.id}!`);
         } else if (dataJson.event === "data") {
-          this.mapCallbackTopic[dataJson.topic](dataJson);
+          this.sendToTopic(dataJson);
           // console.log({ data: dataJson.data });
+        } else if (dataJson.event === "sub") {
+          // console.log(dataJson);
+          this.sendToTopic(dataJson);
         } else if (dataJson.event === "error") {
           console.error({ error: dataJson.data })
         }
       }
     });
+  }
+
+  sendToTopic(value: WebSocketMessageOut) {
+    // console.log(this.mapCallbackTopic[value.topic],value.topic);
+    this.mapCallbackTopic[value.topic](value);
   }
 
   onConnect() {
@@ -48,17 +55,20 @@ export class ApiService {
   subTopic(topic: string, callback: (data: WebSocketMessageOut) => void) {
     let message: WebSocketMessageIn = {
       event: "sub",
-      topic,
-      id: this.id
+      topic
     }
     this.mapCallbackTopic[topic] = callback;
     if (this.connected) {
-      this.websocketService.sendMessage(message)
+      this.sendMessage(message);
     } else {
       this.onConnectionFct.push(() => {
-        this.websocketService.sendMessage(message)
+        this.sendMessage(message);
       })
     }
+  }
 
+  private sendMessage(message: WebSocketMessageIn) {
+    message.id = this.id;
+    this.websocketService.sendMessage(message);
   }
 }

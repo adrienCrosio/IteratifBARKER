@@ -18,6 +18,10 @@ if (process.platform === "win32") {
 if (require.main === module) {
     console.log('called directly');
     let bot = main();
+    setTimeout(() => {
+        console.log("teste");
+        console.log(bot.getValueTopic("currentPrice"));
+    }, 1.2 * 60 * 1000)
     process.on("SIGINT", function () {
         console.log("ctr+C catch");
         bot.clean();
