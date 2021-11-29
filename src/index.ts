@@ -1,6 +1,8 @@
 import { Bot } from "./binance";
-function main(): Bot {
-    return new Bot();
+function main(): Bot | null {
+    // return new Bot();
+
+    return null;
 };
 
 if (process.platform === "win32") {
@@ -16,18 +18,21 @@ if (process.platform === "win32") {
 }
 
 if (require.main === module) {
-    console.log('called directly');
     let bot = main();
-    setTimeout(() => {
-        console.log("teste");
-        console.log(bot.getValueTopic("currentPrice"));
-    }, 1.2 * 60 * 1000)
     process.on("SIGINT", function () {
         console.log("ctr+C catch");
-        bot.clean();
+        bot?.clean();
         //graceful shutdown
         process.exit();
     });
+}
+
+function generateRandomArrayDuration() {
+
+}
+
+function calcMacd(arrayMoy, duration_min: number) {
+
 }
 
 export { main };

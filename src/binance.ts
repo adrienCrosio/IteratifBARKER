@@ -1,4 +1,4 @@
-import Binance, { ReconnectingWebSocketHandler } from 'binance-api-node';
+import Binance, { BidDepth, ReconnectingWebSocketHandler } from 'binance-api-node';
 import api_key from "../apikey.json";
 
 class Bot {
@@ -17,13 +17,32 @@ class Bot {
         //     console.log({ trad });
         // });
 
-        // let clean = client.ws.candles(currency,"1s", (ticker) => {
-        //     console.log({ ticker });
-        // });
+        this.cleanList.push(client.ws.depth(currency, (truc) => {
+            let min_price = 99999999, max_price = 0, ask_value!: BidDepth, bid_value!: BidDepth;
+            truc.askDepth.map((value) => {
+                let float = parseFloat(value.price);
+                if (min_price > float) {
+                    ask_value = value;
+                }
+            })
+            truc.bidDepth.map((value) => {
+                let float = parseFloat(value.price);
+                if (max_price < float) {
+                    bid_value = value;
+                }
+                // value.price
+            })
+            // console.log({ ask_value, bid_value });
+            // let diff = ask_value.price - bid_value.price;
+            // console.log(candle.close,candle.closeTime, Date.now());
+            // candle.
+            // this.pub('currentPrice', candle.close);
+        }));
 
         this.cleanList.push(client.ws.candles(currency, "1m", (candle) => {
             // console.log({ currentprice: candles.close });
             // console.log(candle.close,candle.closeTime, Date.now());
+            // candle.
             this.pub('currentPrice', candle.close);
         }));
     }
@@ -55,7 +74,7 @@ class Bot {
             this.allTopicCallBackFct(topic, valueToSend);
     }
 
-    clean():void {
+    clean(): void {
         for (const clean of this.cleanList) {
             clean();
         }
