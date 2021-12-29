@@ -2,12 +2,12 @@ import { ArrayTime, ArrayTimePrice } from '../interface/bot_inner_interface';
 import { Bot } from "./binance";
 
 function main(): Bot {
-    // return new Bot();
-    const duration_min = 10;
-    const start_date = new Date();
-    let rdm_array = generateRandomArrayTimePrice(duration_min, start_date);
-    console.log(calcMACD(rdm_array, duration_min, start_date));
-    return new Bot(false);
+    return new Bot();
+    // const duration_min = 10;
+    // const start_date = new Date();
+    // let rdm_array = generateRandomArrayTimePrice(duration_min, start_date);
+    // console.log(calcMACD(rdm_array, duration_min, start_date));
+    // return new Bot(false);
 };
 
 if (process.platform === "win32") {

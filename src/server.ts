@@ -111,7 +111,7 @@ function unsubTopic(topic: string, id: string) {
 }
 
 function sendDataTopic(topic: string, data: any) {
-    console.log({ topic, data });
+    console.log({ topic });
     if (topic_map[topic]) {
         for (const id in topic_map[topic]) {
             let client = topic_map[topic][id];

@@ -1,12 +1,13 @@
 import Binance, { BidDepth, ReconnectingWebSocketHandler } from 'binance-api-node';
 import { ArrayTime } from '../interface/bot_inner_interface';
 import api_key from "../apikey.json";
+import { writeFile } from 'fs';
 
 class Bot {
     private cleanList: ReconnectingWebSocketHandler[] = [];
     private allTopicCallBackFct!: (topic: string, value: any) => void;
     private allValueTopic: { [topic: string]: ArrayTime[] } = {};
-    private duration: number = 1 * 60 * 1000; //20 min
+    private duration: number = 6 * 60 * 60 * 1000; //6 h
     constructor(webInteraction: boolean = true) {
         if (webInteraction) {
             const client = Binance({
@@ -50,13 +51,15 @@ class Bot {
         }
     }
 
-    getValueTopic(topic: string): any[] {
+    getValueTopic(topic: string): ArrayTime[] {
         return this.allValueTopic[topic];
     }
 
     setCallbackFctAllTopic(callback: (topic: string, value: any) => void): void {
         this.allTopicCallBackFct = callback;
     }
+
+    last_save = new Date();
 
     private pub(topic: string, value: any, time?: number): void {
         if (!time) {
@@ -72,6 +75,16 @@ class Bot {
         });
         let valueToSend = { time, value }
         filteredValue.push(valueToSend);
+        if (this.last_save.getTime() < Date.now() - 5 * 60 * 1000) {
+            let actual_date = new Date();
+            this.last_save = actual_date;
+            const duration_m = Math.round((Date.now() - this.getValueTopic(topic)[0].time) / 1000 / 60);
+            const file_name = `./data/${actual_date.getDate()}-${actual_date.getMonth()}-${actual_date.getFullYear()}-${actual_date.getHours()}h-${actual_date.getMinutes()}m-${actual_date.getSeconds()}s_duration_${duration_m}.json`;
+            writeFile(file_name, JSON.stringify(this.allValueTopic), { flag: 'w' }, (err) => {
+                if (err) throw err;
+                console.log('File created: ' + file_name);
+            });
+        }
         this.allValueTopic[topic] = filteredValue;
         if (this.allTopicCallBackFct !== undefined)
             this.allTopicCallBackFct(topic, valueToSend);
