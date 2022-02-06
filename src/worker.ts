@@ -1,3 +1,5 @@
+// was just a test to see how to do multithreading in JS (node)
+
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 import WebSocket from "ws";
 import { WebSocketMessageOut } from "../interface/websocket_interface";

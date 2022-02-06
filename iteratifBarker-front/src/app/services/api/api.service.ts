@@ -39,6 +39,7 @@ export class ApiService {
     });
   }
 
+  // this function is use to simulate ws values coming in
   sendToTopic(value: WebSocketMessageOut) {
     // console.log(this.mapCallbackTopic[value.topic],value.topic);
     this.mapCallbackTopic[value.topic](value);

@@ -4,10 +4,15 @@ import api_key from "../apikey.json";
 import { writeFile } from 'fs';
 
 class Bot {
+    // the clean list is used to close properly the websocket interaction with the binance server
     private cleanList: ReconnectingWebSocketHandler[] = [];
     private allTopicCallBackFct!: (topic: string, value: any) => void;
     private allValueTopic: { [topic: string]: ArrayTime[] } = {};
     private duration: number = 6 * 60 * 60 * 1000; //6 h
+    private saving_data = false;
+    private last_save = new Date();
+    private time_interval_saving = 5 * 60 * 1000;
+
     constructor(webInteraction: boolean = true) {
         if (webInteraction) {
             const client = Binance({
@@ -20,15 +25,15 @@ class Bot {
             //     console.log({ trad });
             // });
 
-            this.cleanList.push(client.ws.depth(currency, (truc) => {
+            this.cleanList.push(client.ws.depth(currency, (data_depth) => {
                 let min_price = 99999999, max_price = 0, ask_value!: BidDepth, bid_value!: BidDepth;
-                truc.askDepth.map((value) => {
+                data_depth.askDepth.map((value) => {
                     let float = parseFloat(value.price);
                     if (min_price > float) {
                         ask_value = value;
                     }
                 })
-                truc.bidDepth.map((value) => {
+                data_depth.bidDepth.map((value) => {
                     let float = parseFloat(value.price);
                     if (max_price < float) {
                         bid_value = value;
@@ -51,6 +56,10 @@ class Bot {
         }
     }
 
+    initTopicValues(topic: string, data: ArrayTime[]) {
+        this.allValueTopic[topic] = data;
+    }
+
     getValueTopic(topic: string): ArrayTime[] {
         return this.allValueTopic[topic];
     }
@@ -58,8 +67,6 @@ class Bot {
     setCallbackFctAllTopic(callback: (topic: string, value: any) => void): void {
         this.allTopicCallBackFct = callback;
     }
-
-    last_save = new Date();
 
     private pub(topic: string, value: any, time?: number): void {
         if (!time) {
@@ -75,7 +82,7 @@ class Bot {
         });
         let valueToSend = { time, value }
         filteredValue.push(valueToSend);
-        if (this.last_save.getTime() < Date.now() - 5 * 60 * 1000) {
+        if (this.saving_data && this.last_save.getTime() < Date.now() - this.time_interval_saving) {
             let actual_date = new Date();
             this.last_save = actual_date;
             const duration_m = Math.round((Date.now() - this.getValueTopic(topic)[0].time) / 1000 / 60);

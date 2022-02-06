@@ -21,7 +21,8 @@
         "resolveJsonModule": true,
         "noImplicitAny": false,
         "noEmitOnError": true,
-        "removeComments": false
+        "removeComments": false,
+        "strictNullChecks": false 
     },
     "exclude": [
         "node_modules"
