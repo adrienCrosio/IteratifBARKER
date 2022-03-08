@@ -159,16 +159,17 @@ server.listen(8080, async () => {
     // @ts-ignore
     const port = server.address().port;
     console.log("App now running on port", port);
-    bot = main();
-    bot.setCallbackFctAllTopic((topic, value) => {
-        sendDataTopic(topic, value);
-    })
+    main();
+    // bot = main();
+    // bot.setCallbackFctAllTopic((topic, value) => {
+    //     sendDataTopic(topic, value);
+    // })
     setInterval(() => {
         sendDataTopic('status', "UP");
     }, 5000);
     process.on("SIGINT", function () {
         console.log("ctr+C catch");
-        bot.clean();
+        // bot.clean();
         //graceful shutdown
         process.exit();
     });

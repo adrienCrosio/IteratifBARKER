@@ -1,21 +1,23 @@
 import Binance, { Candle, CandleChartInterval_LT, CandleChartResult } from 'binance-api-node';
 import api_key from "../apikey.json";
 import { BarkCandle } from "../interface/interface_data";
+import { AlgorithmParent } from "./algorithm/AlgorithmParent";
+import { AlgorithmContainer } from './AlgorithmContainer';
 
 export interface AlgorithmHandlerOption {
     currency: string,
     time_frame: CandleChartInterval_LT
-    algorithm_list: any[],
+    algorithm_list: AlgorithmParent[],
     start_date?: Date,
     end_date?: Date,
 }
 
 export class AlgorithmHandler {
-    readonly option: AlgorithmHandlerOption;
-
-    candle_data: BarkCandle[] = [];
-    last_candle: BarkCandle;
-
+    private readonly option: AlgorithmHandlerOption;
+    private algoContainer: AlgorithmContainer;
+    private candle_data: BarkCandle[] = [];
+    private last_candle: BarkCandle;
+    private clean_ws_list = [];
 
     client = Binance({
         apiKey: api_key.public_key,
@@ -25,6 +27,7 @@ export class AlgorithmHandler {
 
     constructor(option: AlgorithmHandlerOption) {
         this.option = option;
+        this.algoContainer = new AlgorithmContainer(option.algorithm_list);
         this._initAsyncFunction();
     }
 
@@ -46,29 +49,45 @@ export class AlgorithmHandler {
             })
         }
         this.last_candle = this.candle_data[this.candle_data.length - 1];
+        this.onCandleChange();
     }
 
     subCandle() {
-        this.client.ws.candles(this.option.currency, this.option.time_frame, (candle) => {
+        let clean = this.client.ws.candles(this.option.currency, this.option.time_frame, (candle) => {
             this._callbackCandle(candle);
         });
+        this.clean_ws_list.push(clean);
     }
 
-    _callbackCandle(candle: Candle) {
+    cleanWs() {
+        for (const clean of this.clean_ws_list) {
+            clean();
+        }
+    }
+
+    private _callbackCandle(candle: Candle) {
         if (this.last_candle) {
             if (this.last_candle.closeDate.getTime() !== candle.closeTime) {
                 // we have finished a time frame
-                console.log("Time frame elpased", candle.closeTime);
+                // console.log("Time frame elpased", candle.closeTime);
                 let barkCandle = candleBinanceToBarkCandle(candle);
                 this.candle_data.push(barkCandle);
                 this.last_candle = barkCandle;
+                this.onCandleChange();
             } else {
-                console.log("same time frame", candle.closeTime);
+                // console.log("same time frame", candle.closeTime);
             }
         } else {
-
             this.last_candle = candleBinanceToBarkCandle(candle);
         }
+    }
+
+    getCurrentCandleData() {
+        return this.candle_data;
+    }
+
+    private onCandleChange() {
+        this.algoContainer.onCandleChange(this.getCurrentCandleData());
     }
 }
 
@@ -82,5 +101,3 @@ function candleBinanceToBarkCandle(candle: Candle): BarkCandle {
         openPrice: parseFloat(candle.open)
     }
 }
-
-new AlgorithmHandler({ currency: "BTCUSDT", algorithm_list: [], time_frame: '1m' });

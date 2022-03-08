@@ -1,30 +1,37 @@
 import { ArrayTime, ArrayTimePrice } from '../interface/bot_inner_interface';
 import { Bot } from "./binance";
 import data_json from "../data/30-10-2021-19h-0m-21s_duration_55.json"
-function main(): Bot {
-    const bot = new Bot(false);
-    bot.initTopicValues("currentPrice", data_json.currentPrice);
-    // return bot;
-    const duration_min = 10;
-    const start_date = new Date(data_json.currentPrice[0].time);
-    // let rdm_array = generateRandomArrayTimePrice(duration_min, start_date);
-    const array_time_price: ArrayTimePrice[] = data_json.currentPrice.map(x => {
-        return { time: x.time, value: parseFloat(x.value) }
-    });
-    // console.log(array_time_price[0].time - array_time_price[array_time_price.length - 1].time)
-    let MACD_values: ArrayTimePrice[] = [];
-    for (const value of array_time_price) {
-        let start_date = new Date(value.time);
-        let macd_value = calcMACD(array_time_price, duration_min, start_date);
-        if (macd_value !== null) {
-            MACD_values.push({ time: value.time, value: macd_value });
-        }
-    }
-    bot.initTopicValues("macdValues", MACD_values);
-    console.log("done init !");
+import { AlgorithmHandler } from './AlgorithmHandler';
+import { AlgorithmParent } from './algorithm/AlgorithmParent';
+import { ExempleAlgo } from './algorithm/ExempleAlgo';
+function main() {
+    let algorithm_list: AlgorithmParent[] = [];
+    algorithm_list.push(new ExempleAlgo());
+    new AlgorithmHandler({ currency: "BTCUSDT", algorithm_list, time_frame: '1m' });
+
+    // const bot = new Bot(false);
+    // bot.initTopicValues("currentPrice", data_json.currentPrice);
+    // // return bot;
+    // const duration_min = 10;
+    // const start_date = new Date(data_json.currentPrice[0].time);
+    // // let rdm_array = generateRandomArrayTimePrice(duration_min, start_date);
+    // const array_time_price: ArrayTimePrice[] = data_json.currentPrice.map(x => {
+    //     return { time: x.time, value: parseFloat(x.value) }
+    // });
+    // // console.log(array_time_price[0].time - array_time_price[array_time_price.length - 1].time)
+    // let MACD_values: ArrayTimePrice[] = [];
+    // for (const value of array_time_price) {
+    //     let start_date = new Date(value.time);
+    //     let macd_value = calcMACD(array_time_price, duration_min, start_date);
+    //     if (macd_value !== null) {
+    //         MACD_values.push({ time: value.time, value: macd_value });
+    //     }
+    // }
+    // bot.initTopicValues("macdValues", MACD_values);
+    // console.log("done init !");
     // const MACD_values = calcMACD(array_time_price, duration_min, start_date);
     // bot.initTopicValues("macdValues", MACD_values);
-    return bot;
+    // return bot;
 };
 
 if (process.platform === "win32") {
@@ -43,7 +50,7 @@ if (require.main === module) {
     let bot = main();
     process.on("SIGINT", function () {
         console.log("ctr+C catch");
-        bot!.clean();
+        // bot!.clean();
         //graceful shutdown
         process.exit();
     });
