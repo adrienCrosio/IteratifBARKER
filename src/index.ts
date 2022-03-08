@@ -1,6 +1,4 @@
 import { ArrayTime, ArrayTimePrice } from '../interface/bot_inner_interface';
-import { Bot } from "./binance";
-import data_json from "../data/30-10-2021-19h-0m-21s_duration_55.json"
 import { AlgorithmHandler } from './AlgorithmHandler';
 import { AlgorithmParent } from './algorithm/AlgorithmParent';
 import { ExempleAlgo } from './algorithm/ExempleAlgo';
